@@ -12,15 +12,15 @@ public class CPGroup {
 	List<ObjectId> groupMember; 
 	String createdBy;
 	int groupTotal;
-	String date;
+	String groupCreationDate;
 	public CPGroup() {};
-	public CPGroup(ObjectId cpGroupId, String groupName, List<ObjectId> groupMember, String createdBy, int groupTotal, String date) {
+	public CPGroup(ObjectId cpGroupId, String groupName, List<ObjectId> groupMember, String createdBy, int groupTotal, String groupCreationDate) {
 		this.cpGroupId=cpGroupId;
 		this.groupName = groupName;
 		this.groupMember = groupMember;
 		this.createdBy = createdBy;
 		this.groupTotal = groupTotal;
-		this.date=date;
+		this.groupCreationDate=groupCreationDate;
 	}
 	public String getGroupName() {
 		return groupName;
@@ -47,10 +47,10 @@ public class CPGroup {
 		this.groupTotal = groupTotal;
 	}
 	public String getDate() {
-		return date;
+		return groupCreationDate;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setDate(String groupCreationDate) {
+		this.groupCreationDate = groupCreationDate;
 	}
 	public ObjectId getCpGroupId() {
 		return cpGroupId;

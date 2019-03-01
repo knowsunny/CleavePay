@@ -1,24 +1,24 @@
-package com.sunny.cleavepay.model;
+package com.sunny.cleavepay.contract;
 
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "CP_Transaction")
-public class CPTransaction {
+import com.sunny.cleavepay.model.UserToUserTransaction;
+
+public class CPTransactionRequestDTO {
 	private ObjectId cptransactionId;
 	private String transactionName;
 	private String transactionType;
 	private ObjectId cpgroupId;
-	private List<UserToUserTransaction> cpuserInvolved;
+	private List<UserToUserTransactionRequestDTO> cpuserInvolved;
 	private String transactionDateTime;
 
-	public CPTransaction() {
+	public CPTransactionRequestDTO() {
 	};
 
-	public CPTransaction(ObjectId cptransactionId, String transactionName, String transactionType, ObjectId cpgroupId,
-			List<UserToUserTransaction> cpuserInvolved, String transactionDateTime) {
+	public CPTransactionRequestDTO(ObjectId cptransactionId, String transactionName, String transactionType, ObjectId cpgroupId,
+			List<UserToUserTransactionRequestDTO> cpuserInvolved, String transactionDateTime) {
 		this.cptransactionId = cptransactionId;
 		this.transactionName = transactionName;
 		this.transactionType = transactionType;
@@ -59,11 +59,11 @@ public class CPTransaction {
 		this.cpgroupId = cpgroupId;
 	}
 
-	public List<UserToUserTransaction> getCpuserInvolved() {
+	public List<UserToUserTransactionRequestDTO> getCpuserInvolved() {
 		return cpuserInvolved;
 	}
 
-	public void setCpuserInvolved(List<UserToUserTransaction> cpuserInvolved) {
+	public void setCpuserInvolved(List<UserToUserTransactionRequestDTO> cpuserInvolved) {
 		this.cpuserInvolved = cpuserInvolved;
 	}
 

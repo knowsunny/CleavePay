@@ -1,6 +1,7 @@
 package com.sunny.cleavepay.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sunny.cleavepay.contract.CPTransactionRequestDTO;
 import com.sunny.cleavepay.model.CPGroup;
 import com.sunny.cleavepay.model.CPUser;
+import com.sunny.cleavepay.service.CPGroupServices;
+import com.sunny.cleavepay.service.CPTransactionService;
 import com.sunny.cleavepay.service.CPUserService;
 
 
@@ -27,6 +31,11 @@ import com.sunny.cleavepay.service.CPUserService;
 public class CPController {
 	@Autowired
 	CPUserService cpuserservice;
+	@Autowired
+	CPGroupServices cpugroupservice;
+	@Autowired
+	CPTransactionService cpuTransactionservice;
+
 	
 	@PostMapping("/cleavepay/registerUser")
 	public String createCPUser( @RequestBody String cpUserRequest ) throws JsonParseException, JsonMappingException, IOException{
@@ -52,10 +61,19 @@ public class CPController {
 		ObjectMapper objectMapper = new ObjectMapper();
 	    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		CPGroup cpGroup=objectMapper.readValue(groupDetails, CPGroup.class);
-		cpuserservice.createCPGroup(cpGroup);
+		cpugroupservice.createCPGroup(cpGroup);
 		return isGroupCreated;
 	}
+	@GetMapping("/cleavepay/{mobileNumber}/groudetails/{pagenumber}")
+	public List<CPGroup> getUserGroupDetails(@PathVariable("mobileNumber") String mobileNumber,@PathVariable("pagenumber") int groupPageNumber){
+	List<CPGroup> ret = cpugroupservice.getAllUserGroups(mobileNumber,groupPageNumber);	
+	return ret;
+	}
 	
+	@PostMapping("/cleavepay/transaction/groudetails/")
+	public boolean createTransaction(@RequestBody String transactionDetails) {
+		return cpuTransactionservice.createTransaction(transactionDetails);
+	}
 	
 
 }

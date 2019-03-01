@@ -1,9 +1,9 @@
 package com.sunny.cleavepay.service;
 
-
 import java.util.Arrays;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +19,27 @@ import com.sunny.cleavepay.dao.ICPGroupDao;
 import com.sunny.cleavepay.dao.ICleavepayDao;
 import com.sunny.cleavepay.model.CPGroup;
 import com.sunny.cleavepay.model.CPUser;
+
 @Service("userDetailsService")
-public class CPUserService implements UserDetailsService  {
+public class CPUserService implements UserDetailsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CPUserService.class);
 
-    private final ICleavepayDao cleavepaydao;
-    private final ICPGroupDao groupDAO; 
+	private final ICleavepayDao cleavepaydao;
 
-    @Autowired
-    CPUserService(ICleavepayDao cleavepaydao, ICPGroupDao groupDao) {
-        this.cleavepaydao = cleavepaydao;
-        this.groupDAO=groupDao;
-    }
-	
+	@Autowired
+	CPUserService(ICleavepayDao cleavepaydao) {
+		this.cleavepaydao = cleavepaydao;
+	}
+
+	private CPUser getCPuserForMobileNumber(String mobileNumber) {
+		CPUser currentCPUser = cleavepaydao.findByMobileNumber(mobileNumber);
+		return currentCPUser;
+	}
+
 	public String createCPUser(CPUser user) {
-		if(!cleavepaydao.existsByMobileNumber(user.getMobileNumber())) {
-		cleavepaydao.save(user);
-		return "user created successful";
+		if (!cleavepaydao.existsByMobileNumber(user.getMobileNumber())) {
+			cleavepaydao.save(user);
+			return "user created successful";
 		}
 		return "user already exist";
 	}
@@ -43,25 +47,14 @@ public class CPUserService implements UserDetailsService  {
 	@Override
 	public UserDetails loadUserByUsername(String mobileNumber) throws UsernameNotFoundException {
 		CPUser user = cleavepaydao.findByMobileNumber(mobileNumber);
-System.out.println(user.getMobileNumber()+" "+user.getPassword());
-	    if(user == null) {
-	      throw new UsernameNotFoundException("User not found");
-	    }
-
-	    List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
-
-	    return new User(user.getMobileNumber(), user.getPassword(), authorities);
-	  }
-	public boolean createCPGroup(CPGroup cpgroup) {
-		boolean isUser = cleavepaydao.existsByMobileNumber(cpgroup.getCreatedBy());
-		boolean isGroupExist=groupDAO.existsByGroupName(cpgroup.getGroupName());
-		if(isUser && isGroupExist) {
-			return false;
-		}else {
-			groupDAO.save(cpgroup);
+		System.out.println(user.getMobileNumber() + " " + user.getPassword());
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found");
 		}
-		return true;
-		
-	}
+
+		List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
+
+		return new User(user.getMobileNumber(), user.getPassword(), authorities);
 	}
 
+}
