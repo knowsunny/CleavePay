@@ -7,7 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "CPuser")
 public class CPUser {
+	@Id
 	private ObjectId userId;
+	private String cpUserFullName;
 	private String username;
 	private String mobileNumber;
 	private String password;
@@ -20,7 +22,8 @@ public class CPUser {
 	};
 
 	public CPUser(ObjectId userId, String username, String mobileNumber, String emailId, String password,
-			String userCreationDate, String lastLoginDateTime) {
+			String userCreationDate, String lastLoginDateTime, String cpUserFullName) {
+		this.cpUserFullName=cpUserFullName;
 		this.username = username;
 		this.mobileNumber = mobileNumber;
 		this.emailId = emailId;
@@ -92,6 +95,14 @@ public class CPUser {
 
 	public void setLastLoginDateTime(String lastLoginDateTime) {
 		this.lastLoginDateTime = lastLoginDateTime;
+	}
+
+	public String getCpUserFullName() {
+		return cpUserFullName;
+	}
+
+	public void setCpUserFullName(String cpUserFullName) {
+		this.cpUserFullName = cpUserFullName;
 	}
 
 }

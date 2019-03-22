@@ -15,4 +15,5 @@ public interface ICPGroupDao extends MongoRepository<CPGroup, Integer> {
 	boolean existsByGroupName(String groupName);
 	@Query(value = "{ 'groupMember' : ?0 }")
 	public List<CPGroup> findByGroupMember(ObjectId memberObjectId,PageRequest pageable);
+	
 }

@@ -3,10 +3,12 @@ package com.sunny.cleavepay.model;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="Cp_group")
 public class CPGroup {
+	@Id
 	ObjectId cpGroupId;
 	String groupName;
 	List<ObjectId> groupMember; 

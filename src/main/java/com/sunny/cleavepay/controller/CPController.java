@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunny.cleavepay.contract.CPTransactionRequestDTO;
+import com.sunny.cleavepay.dto.CPGroupRequestDTO;
 import com.sunny.cleavepay.model.CPGroup;
 import com.sunny.cleavepay.model.CPUser;
 import com.sunny.cleavepay.service.CPGroupServices;
@@ -51,22 +52,22 @@ public class CPController {
 		return isUserCreated;
 	}
 	
-	@GetMapping("/cleavepay/test/{id}")
-	public String getuserdetails(@PathVariable String id) {
-		return id;
+	@GetMapping("/cleavepay/cpuser/{mobileNumber}")
+	public CPUser getuserdetails(@PathVariable String mobileNumber) {
+		return cpuserservice.getCPuserForMobileNumber(mobileNumber);
 	}
 	@PostMapping("/cleavepay/group/{mobileNumber}")
 	public boolean createCPGroup(@PathVariable String mobileNumber, @RequestBody String groupDetails) throws JsonParseException, JsonMappingException, IOException {
 		boolean isGroupCreated=true;
 		ObjectMapper objectMapper = new ObjectMapper();
 	    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		CPGroup cpGroup=objectMapper.readValue(groupDetails, CPGroup.class);
-		cpugroupservice.createCPGroup(cpGroup);
+		CPGroupRequestDTO cpGroupDTO=objectMapper.readValue(groupDetails, CPGroupRequestDTO.class);
+		cpugroupservice.createCPGroup(cpGroupDTO);
 		return isGroupCreated;
 	}
 	@GetMapping("/cleavepay/{mobileNumber}/groudetails/{pagenumber}")
-	public List<CPGroup> getUserGroupDetails(@PathVariable("mobileNumber") String mobileNumber,@PathVariable("pagenumber") int groupPageNumber){
-	List<CPGroup> ret = cpugroupservice.getAllUserGroups(mobileNumber,groupPageNumber);	
+	public List<CPGroupRequestDTO> getUserGroupDetails(@PathVariable("mobileNumber") String mobileNumber,@PathVariable("pagenumber") int groupPageNumber){
+	List<CPGroupRequestDTO> ret = cpugroupservice.getAllUserGroups(mobileNumber,groupPageNumber);	
 	return ret;
 	}
 	

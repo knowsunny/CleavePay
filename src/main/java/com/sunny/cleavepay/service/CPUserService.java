@@ -1,5 +1,7 @@
 package com.sunny.cleavepay.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,8 @@ import com.sunny.cleavepay.model.CPUser;
 public class CPUserService implements UserDetailsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CPUserService.class);
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	private final ICleavepayDao cleavepaydao;
 
 	@Autowired
@@ -31,17 +36,32 @@ public class CPUserService implements UserDetailsService {
 		this.cleavepaydao = cleavepaydao;
 	}
 
-	private CPUser getCPuserForMobileNumber(String mobileNumber) {
+	public CPUser getCPuserForMobileNumber(String mobileNumber) {
 		CPUser currentCPUser = cleavepaydao.findByMobileNumber(mobileNumber);
 		return currentCPUser;
 	}
 
 	public String createCPUser(CPUser user) {
-		if (!cleavepaydao.existsByMobileNumber(user.getMobileNumber())) {
+		user.setPassword(encryptPassword(user.getPassword()));
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		user.setUserCreationDate(dtf.format(now));
+		if (!cleavepaydao.existsByMobileNumber(user.getMobileNumber())
+				&& !cleavepaydao.existsByMobileNumber(user.getEmailId())) {
 			cleavepaydao.save(user);
 			return "user created successful";
+		} else if (cleavepaydao.existsByMobileNumber(user.getMobileNumber())
+				&& cleavepaydao.existsByMobileNumber(user.getEmailId())) {
+			return "Mobile number and email id already exist";
+		} else if (cleavepaydao.existsByMobileNumber(user.getMobileNumber())) {
+			return "mobile number already exist";
+		} else {
+			return "Email id already exist";
 		}
-		return "user already exist";
+	}
+
+	private String encryptPassword(String password) {
+		return passwordEncoder.encode(password);
 	}
 
 	@Override

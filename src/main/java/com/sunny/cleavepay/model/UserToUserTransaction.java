@@ -1,7 +1,9 @@
 package com.sunny.cleavepay.model;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "UserToUserTransaction")
 public class UserToUserTransaction {
 	private ObjectId userToUserTransactionId;
 	private ObjectId cpUserId;
